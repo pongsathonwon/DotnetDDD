@@ -92,7 +92,7 @@ Dependencies point inward: `API → Application → Domain` and `Infrastructure 
 
 - [x] Domain layer with at least one proper Aggregate (Order), Value Objects (Money, ISBN), and a Domain Event
 - [x] Application layer with use cases implemented via MediatR handlers, FluentValidation, and CQRS separation
-- [ ] Infrastructure layer with EF Core persistence
+- [x] Infrastructure layer with EF Core persistence
 - [ ] API layer with controllers that delegate to MediatR
 - [ ] FluentValidation for input validation
 - [ ] Serilog for structured logging
