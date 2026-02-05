@@ -4,14 +4,9 @@ using Domain.Ordering;
 
 namespace Application.Catalog.CreateBook;
 
-public sealed class CreateBookCommandHandler : ICommandHandler<CreateBookCommand, Guid>
+public sealed class CreateBookCommandHandler(IBookRepository bookRepository) : ICommandHandler<CreateBookCommand, Guid>
 {
-    private readonly IBookRepository _bookRepository;
-
-    public CreateBookCommandHandler(IBookRepository bookRepository)
-    {
-        _bookRepository = bookRepository;
-    }
+    private readonly IBookRepository _bookRepository = bookRepository;
 
     public async Task<Guid> Handle(CreateBookCommand request, CancellationToken cancellationToken)
     {
