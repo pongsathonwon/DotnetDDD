@@ -45,12 +45,12 @@ An online bookstore is used as the learning domain. It's simple enough to start 
 
 ### Bounded Contexts
 
-| Context       | Responsibility                                | Key Concepts                              |
-|---------------|-----------------------------------------------|-------------------------------------------|
-| **Catalog**   | Managing books, authors, categories            | Book, Author, Category, ISBN (Value Object)|
-| **Ordering**  | Placing and managing orders                    | Order (Aggregate Root), OrderLine, OrderStatus |
-| **Customers** | Customer profiles and addresses                | Customer, Address (Value Object)          |
-| **Inventory** | Stock levels, reservations                     | StockItem, Reservation                    |
+| Context       | Responsibility                      | Key Concepts                                   |
+| ------------- | ----------------------------------- | ---------------------------------------------- |
+| **Catalog**   | Managing books, authors, categories | Book, Author, Category, ISBN (Value Object)    |
+| **Ordering**  | Placing and managing orders         | Order (Aggregate Root), OrderLine, OrderStatus |
+| **Customers** | Customer profiles and addresses     | Customer, Address (Value Object)               |
+| **Inventory** | Stock levels, reservations          | StockItem, Reservation                         |
 
 ### Why This Domain Works
 
@@ -78,20 +78,20 @@ Dependencies point inward: `API → Application → Domain` and `Infrastructure 
 
 ### Target Stack
 
-| Concern             | Tool / Library                  | Why                                            |
-|---------------------|---------------------------------|------------------------------------------------|
-| ORM                 | EF Core                        | Industry standard, great migration support, LINQ |
-| Validation          | FluentValidation                | Declarative rules, clean separation from domain |
-| Mediator / CQRS     | MediatR                        | Decouples handlers from controllers, enables pipeline behaviors |
-| Logging             | Serilog                        | Structured logging, multiple sinks              |
-| Testing             | xUnit + Moq (or NSubstitute)   | Most popular .NET test stack                    |
-| Containers          | Docker + Docker Compose         | Consistent environments, easy DB setup          |
-| Database            | PostgreSQL                     | Open source, runs well in Docker, SQL-based     |
+| Concern         | Tool / Library               | Why                                                             |
+| --------------- | ---------------------------- | --------------------------------------------------------------- |
+| ORM             | EF Core                      | Industry standard, great migration support, LINQ                |
+| Validation      | FluentValidation             | Declarative rules, clean separation from domain                 |
+| Mediator / CQRS | MediatR                      | Decouples handlers from controllers, enables pipeline behaviors |
+| Logging         | Serilog                      | Structured logging, multiple sinks                              |
+| Testing         | xUnit + Moq (or NSubstitute) | Most popular .NET test stack                                    |
+| Containers      | Docker + Docker Compose      | Consistent environments, easy DB setup                          |
+| Database        | PostgreSQL                   | Open source, runs well in Docker, SQL-based                     |
 
 ### Phase 1 Success Criteria
 
-- [ ] Domain layer with at least one proper Aggregate (Order), Value Objects (Money, ISBN), and a Domain Event
-- [ ] Application layer with use cases implemented via MediatR handlers
+- [x] Domain layer with at least one proper Aggregate (Order), Value Objects (Money, ISBN), and a Domain Event
+- [x] Application layer with use cases implemented via MediatR handlers, FluentValidation, and CQRS separation
 - [ ] Infrastructure layer with EF Core persistence
 - [ ] API layer with controllers that delegate to MediatR
 - [ ] FluentValidation for input validation
@@ -112,6 +112,7 @@ Building on Phase 1's foundation, Phase 2 introduces patterns needed for systems
 Separate the write model (commands) from the read model (queries) — the bookstore's catalog reads are far more frequent than order writes, making it a natural fit.
 
 **Goals:**
+
 - [ ] Split MediatR handlers into explicit Command and Query handlers
 - [ ] Create dedicated read models / projections optimized for queries (e.g., `BookListView`, `OrderSummaryView`)
 - [ ] Use Dapper or raw SQL for read-side queries (performance-optimized)
@@ -122,6 +123,7 @@ Separate the write model (commands) from the read model (queries) — the bookst
 Replace in-process domain events with asynchronous messaging between bounded contexts.
 
 **Goals:**
+
 - [ ] Set up RabbitMQ (or MassTransit as an abstraction) in Docker
 - [ ] Publish domain events as integration events (e.g., `OrderPlaced` → `OrderPlacedIntegrationEvent`)
 - [ ] Inventory service subscribes to `OrderPlaced` and reserves stock asynchronously
@@ -133,6 +135,7 @@ Replace in-process domain events with asynchronous messaging between bounded con
 Break the monolith into independently deployable services along bounded context boundaries.
 
 **Goals:**
+
 - [ ] Extract Catalog and Ordering into separate services with their own databases
 - [ ] API Gateway (YARP or Ocelot) to route requests
 - [ ] Each service owns its data — no shared databases
@@ -162,12 +165,43 @@ Break the monolith into independently deployable services along bounded context 
 
 ```
 DotnetDDD/
+├── DotnetDDD.sln
+├── docker-compose.yml
 ├── README.MD
 └── src/
-    ├── Domain/              # Entities, Value Objects, Aggregates, Domain Events
-    │   └── Domain.csproj
-    └── Application/         # Use Cases, DTOs, Validation, MediatR handlers
-        └── Application.csproj (references Domain)
+    ├── Domain/                          # Entities, Value Objects, Aggregates, Domain Events
+    │   ├── Domain.csproj
+    │   ├── Common/                      # Entity, AggregateRoot, ValueObject, IDomainEvent, DomainException
+    │   ├── Catalog/                     # Book, Author, Category, Isbn (VO), IBookRepository
+    │   ├── Ordering/                    # Order (AR), OrderLine, OrderStatus, Money (VO), IOrderRepository
+    │   ├── Customers/                   # Customer, Address (VO), ICustomerRepository
+    │   └── Inventory/                   # StockItem, IStockItemRepository
+    │
+    └── Application/                     # Use Cases, DTOs, Validation, MediatR handlers
+        ├── Application.csproj           # References Domain; MediatR, FluentValidation
+        ├── DependencyInjection.cs       # Service registration
+        ├── Common/
+        │   ├── Messaging/               # ICommand, IQuery, ICommandHandler, IQueryHandler
+        │   └── Behaviors/               # ValidationBehavior (MediatR pipeline)
+        ├── Catalog/
+        │   ├── BookResponse.cs
+        │   ├── CreateBook/              # Command, Handler, Validator
+        │   └── GetBook/                 # Query, Handler
+        ├── Ordering/
+        │   ├── OrderResponse.cs
+        │   ├── CreateOrder/             # Command, Handler, Validator
+        │   ├── AddOrderLine/            # Command, Handler, Validator
+        │   ├── CancelOrder/             # Command, Handler, Validator
+        │   └── GetOrder/                # Query, Handler
+        ├── Customers/
+        │   ├── CustomerResponse.cs
+        │   ├── CreateCustomer/          # Command, Handler, Validator
+        │   └── GetCustomer/             # Query, Handler, Validator
+        └── Inventory/
+            ├── InventoryResponse.cs
+            ├── AddStock/                # Command, Handler, Validator
+            ├── GetStock/                # Query, Handler
+            └── ReserveStock/            # Command, Handler, Validator
 ```
 
-> Infrastructure and API projects will be added as Phase 1 progresses.
+> Infrastructure and API projects will be added next.
