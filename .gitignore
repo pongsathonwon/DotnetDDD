@@ -1,0 +1,33 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## NuGet
+*.nupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+## Visual Studio / Rider
+.vs/
+.idea/
+*.rsuser
+launchSettings.json
+
+## OS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+## Docker
+docker-compose.override.yml
+
+## Secrets
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+*.pfx
+*.p12
