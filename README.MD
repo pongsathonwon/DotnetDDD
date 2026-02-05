@@ -91,7 +91,7 @@ Dependencies point inward: `API → Application → Domain` and `Infrastructure 
 ### Phase 1 Success Criteria
 
 - [x] Domain layer with at least one proper Aggregate (Order), Value Objects (Money, ISBN), and a Domain Event
-- [x] Application layer with use cases implemented via MediatR handlers
+- [x] Application layer with use cases implemented via MediatR handlers, FluentValidation, and CQRS separation
 - [ ] Infrastructure layer with EF Core persistence
 - [ ] API layer with controllers that delegate to MediatR
 - [ ] FluentValidation for input validation
@@ -165,12 +165,43 @@ Break the monolith into independently deployable services along bounded context 
 
 ```
 DotnetDDD/
+├── DotnetDDD.sln
+├── docker-compose.yml
 ├── README.MD
 └── src/
-    ├── Domain/              # Entities, Value Objects, Aggregates, Domain Events
-    │   └── Domain.csproj
-    └── Application/         # Use Cases, DTOs, Validation, MediatR handlers
-        └── Application.csproj (references Domain)
+    ├── Domain/                          # Entities, Value Objects, Aggregates, Domain Events
+    │   ├── Domain.csproj
+    │   ├── Common/                      # Entity, AggregateRoot, ValueObject, IDomainEvent, DomainException
+    │   ├── Catalog/                     # Book, Author, Category, Isbn (VO), IBookRepository
+    │   ├── Ordering/                    # Order (AR), OrderLine, OrderStatus, Money (VO), IOrderRepository
+    │   ├── Customers/                   # Customer, Address (VO), ICustomerRepository
+    │   └── Inventory/                   # StockItem, IStockItemRepository
+    │
+    └── Application/                     # Use Cases, DTOs, Validation, MediatR handlers
+        ├── Application.csproj           # References Domain; MediatR, FluentValidation
+        ├── DependencyInjection.cs       # Service registration
+        ├── Common/
+        │   ├── Messaging/               # ICommand, IQuery, ICommandHandler, IQueryHandler
+        │   └── Behaviors/               # ValidationBehavior (MediatR pipeline)
+        ├── Catalog/
+        │   ├── BookResponse.cs
+        │   ├── CreateBook/              # Command, Handler, Validator
+        │   └── GetBook/                 # Query, Handler
+        ├── Ordering/
+        │   ├── OrderResponse.cs
+        │   ├── CreateOrder/             # Command, Handler, Validator
+        │   ├── AddOrderLine/            # Command, Handler, Validator
+        │   ├── CancelOrder/             # Command, Handler, Validator
+        │   └── GetOrder/                # Query, Handler
+        ├── Customers/
+        │   ├── CustomerResponse.cs
+        │   ├── CreateCustomer/          # Command, Handler, Validator
+        │   └── GetCustomer/             # Query, Handler, Validator
+        └── Inventory/
+            ├── InventoryResponse.cs
+            ├── AddStock/                # Command, Handler, Validator
+            ├── GetStock/                # Query, Handler
+            └── ReserveStock/            # Command, Handler, Validator
 ```
 
-> Infrastructure and API projects will be added as Phase 1 progresses.
+> Infrastructure and API projects will be added next.
