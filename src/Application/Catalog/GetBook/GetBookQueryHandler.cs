@@ -3,14 +3,9 @@ using Domain.Catalog;
 
 namespace Application.Catalog.GetBook;
 
-public sealed class GetBookQueryHandler : IQueryHandler<GetBookQuery, BookResponse?>
+public sealed class GetBookQueryHandler(IBookRepository bookRepository) : IQueryHandler<GetBookQuery, BookResponse?>
 {
-    private readonly IBookRepository _bookRepository;
-
-    public GetBookQueryHandler(IBookRepository bookRepository)
-    {
-        _bookRepository = bookRepository;
-    }
+    private readonly IBookRepository _bookRepository = bookRepository;
 
     public async Task<BookResponse?> Handle(GetBookQuery request, CancellationToken cancellationToken)
     {
