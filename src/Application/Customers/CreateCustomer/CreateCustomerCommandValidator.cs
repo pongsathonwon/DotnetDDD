@@ -29,7 +29,7 @@ public sealed class CreateCustomerValidator : AbstractValidator<CreateCustomerCo
             .MaximumLength(50).WithMessage("State must not exceed 50 characters.");
 
         RuleFor(x => x.ZipCode)
-            .MaximumLength(20).WithMessage("Zip code must not exceed 20 characters.");
+            .MaximumLength(5).WithMessage("Zip code must not exceed 20 characters.");
 
         RuleFor(x => x.Country)
             .MaximumLength(50).WithMessage("Country must not exceed 50 characters.");

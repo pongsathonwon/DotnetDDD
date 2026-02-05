@@ -23,11 +23,11 @@ public sealed class CreateCustomerCommandHandler(ICustomerRepository customerRep
             request.LastName,
             request.Email,
             new Address(
-                request.Street ?? "",
-                request.City ?? "",
-                request.State ?? "",
-                request.ZipCode ?? "",
-                request.Country ?? ""
+                request.Street,
+                request.City,
+                request.State,
+                request.ZipCode,
+                request.Country
                 )
         );
         await _customerRepository.AddAsync(newCustomer, cancellationToken);
