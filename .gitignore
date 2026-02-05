@@ -17,6 +17,9 @@ obj/
 *.rsuser
 launchSettings.json
 
+## ai
+.claude
+
 ## OS
 Thumbs.db
 desktop.ini
