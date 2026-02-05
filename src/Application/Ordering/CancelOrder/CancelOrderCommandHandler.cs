@@ -4,7 +4,7 @@ using Domain.Ordering;
 namespace Application.Ordering.CancelOrder;
 
 
-public sealed class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Guid>
+public sealed class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand>
 {
     private readonly IOrderRepository _orderRepository;
 
@@ -13,7 +13,7 @@ public sealed class CancelOrderCommandHandler : ICommandHandler<CancelOrderComma
         _orderRepository = orderRepository;
     }
 
-    public async Task<Guid> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
+    public async Task Handle(CancelOrderCommand request, CancellationToken cancellationToken)
     {
         Order? order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken) ?? throw new InvalidOperationException($"Order with ID {request.OrderId} not found.");
 
@@ -21,6 +21,5 @@ public sealed class CancelOrderCommandHandler : ICommandHandler<CancelOrderComma
 
         await _orderRepository.UpdateAsync(order, cancellationToken);
 
-        return order.Id;
     }
 }
