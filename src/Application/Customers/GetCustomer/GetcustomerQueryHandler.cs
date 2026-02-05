@@ -5,14 +5,12 @@ namespace Application.Customers.GetCustomer;
 
 public sealed class GetCustomerQueryHandler(ICustomerRepository customerRepository) : IQueryHandler<GetCustomerQuery, CustomerResponse?>
 {
+    private readonly ICustomerRepository _customerRepository = customerRepository;
     public async Task<CustomerResponse?> Handle(GetCustomerQuery request, CancellationToken cancellationToken)
     {
-        Customer? customer = await customerRepository.GetByIdAsync(request.Id, cancellationToken);
+        Customer? customer = await _customerRepository.GetByIdAsync(request.Id, cancellationToken);
 
-        if (customer is null)
-        {
-            return null;
-        }
+        if (customer is null) return null;
 
         return new CustomerResponse(
             customer.Id,
