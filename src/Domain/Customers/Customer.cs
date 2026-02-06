@@ -9,6 +9,7 @@ public sealed class Customer : Entity<Guid>
     public string Email { get; private set; }
     public Address Address { get; private set; }
 
+    private Customer() : base(Guid.Empty) { }
     public Customer(Guid id, string firstName, string lastName, string email, Address address)
         : base(id)
     {

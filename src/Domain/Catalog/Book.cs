@@ -12,6 +12,8 @@ public sealed class Book : Entity<Guid>
     public Money Price { get; private set; }
     public string Description { get; private set; }
 
+    private Book() : base(Guid.Empty) { }
+
     public Book(
         Guid id,
         string title,
