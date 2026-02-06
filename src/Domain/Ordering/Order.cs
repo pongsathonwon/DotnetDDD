@@ -38,7 +38,7 @@ public sealed class Order : AggregateRoot<Guid>
         if (Status != OrderStatus.Pending)
             throw new DomainException("Can only add lines to a pending order.");
 
-        var line = new OrderLine(Guid.NewGuid(), bookId, quantity, unitPrice);
+        var line = new OrderLine(Guid.NewGuid(), base.Id, bookId, quantity, unitPrice);
         _orderLines.Add(line);
     }
 
