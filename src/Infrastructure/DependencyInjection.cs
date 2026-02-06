@@ -1,3 +1,4 @@
+using Domain.Auth;
 using Domain.Catalog;
 using Domain.Customers;
 using Domain.Inventory;
@@ -24,6 +25,7 @@ public static class DependencyInjection
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IStockItemRepository, StockItemRepository>();
+        services.AddScoped<IAuthRepository, AuthRepository>();
 
         return services;
     }

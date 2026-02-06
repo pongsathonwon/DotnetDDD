@@ -1,3 +1,4 @@
+using Domain.Auth;
 using Domain.Catalog;
 using Domain.Customers;
 using Domain.Inventory;
@@ -17,6 +18,7 @@ public class AppDbContext : DbContext
     public DbSet<OrderLine> OrderLines => Set<OrderLine>();
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<StockItem> StockItems => Set<StockItem>();
+    public DbSet<AuthRecord> AuthRecords => Set<AuthRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
