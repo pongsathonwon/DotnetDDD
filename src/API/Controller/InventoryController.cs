@@ -1,5 +1,6 @@
 
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Application.Inventory.GetStock;
 using Application.Inventory.AddStock;
@@ -24,6 +25,7 @@ public class InventoryController(ISender sender) : ControllerBase
         return Ok(inventory);
     }
 
+    [Authorize]
     [HttpPost("")]
     public async Task<IActionResult> AddInventory(AddStockCommand cmd, CancellationToken ct)
     {
@@ -32,6 +34,7 @@ public class InventoryController(ISender sender) : ControllerBase
         return CreatedAtAction(nameof(GetInventoryByBookId), new { id = inventoryId, bookId = cmd.BookId }, inventoryId);
     }
 
+    [Authorize]
     [HttpPost("reserve")]
     public async Task<IActionResult> ReserveInventory(ReserveStockCommand cmd, CancellationToken ct)
     {

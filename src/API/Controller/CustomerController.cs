@@ -1,6 +1,7 @@
 using Application.Customers.CreateCustomer;
 using Application.Customers.GetCustomer;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controller;
@@ -22,6 +23,7 @@ public class CustomerController(ISender sender) : ControllerBase
         return Ok(customer);
     }
 
+    [Authorize]
     [HttpPost("")]
     public async Task<IActionResult> CreateCustomer(CreateCustomerCommand cmd, CancellationToken ct)
     {

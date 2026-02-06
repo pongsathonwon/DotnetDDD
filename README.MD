@@ -94,12 +94,14 @@ Dependencies point inward: `API → Application → Domain` and `Infrastructure 
 - [x] Application layer with use cases implemented via MediatR handlers, FluentValidation, and CQRS separation
 - [x] Infrastructure layer with EF Core persistence
 - [x] API layer with controllers that delegate to MediatR
-- [ ] FluentValidation for input validation
+- [x] FluentValidation for input validation
+- [x] Docker Compose setup (API + PostgreSQL)
+- [x] No business logic in controllers or infrastructure
+- [ ] Global exception handling middleware
+- [ ] Authorization middleware
 - [ ] Serilog for structured logging
 - [ ] Unit tests for domain logic and application use cases
 - [ ] Integration tests for the API layer
-- [ ] Docker Compose setup (API + PostgreSQL)
-- [ ] No business logic in controllers or infrastructure
 
 ---
 
@@ -204,4 +206,4 @@ DotnetDDD/
             └── ReserveStock/            # Command, Handler, Validator
 ```
 
-> Infrastructure and API projects will be added next.
+> Infrastructure and API layers are implemented. See `src/Infrastructure/` and `src/API/`.

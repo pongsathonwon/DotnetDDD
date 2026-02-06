@@ -3,6 +3,7 @@ using Application.Ordering.CancelOrder;
 using Application.Ordering.CreateOrder;
 using Application.Ordering.GetOrder;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controller;
@@ -24,6 +25,7 @@ public class OrderController(ISender sender) : ControllerBase
         return Ok(order);
     }
 
+    [Authorize]
     [HttpPost("")]
     public async Task<IActionResult> CreateOrder(CreateOrderCommand cmd, CancellationToken ct)
     {
@@ -31,6 +33,7 @@ public class OrderController(ISender sender) : ControllerBase
         return CreatedAtAction(nameof(GetOrderById), new { id = orderId }, orderId);
     }
 
+    [Authorize]
     [HttpPost("{id:guid}/cancel")]
     public async Task<IActionResult> CancelOrder(Guid id, CancellationToken ct)
     {
@@ -38,6 +41,7 @@ public class OrderController(ISender sender) : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpPost("{id:guid}/lines")]
     public async Task<IActionResult> AddOrderLine(Guid id, AddOrderLineCommand cmd, CancellationToken ct)
     {

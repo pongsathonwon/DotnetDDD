@@ -1,6 +1,7 @@
 using Application.Catalog.CreateBook;
 using Application.Catalog.GetBook;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controller;
@@ -22,6 +23,7 @@ public class BookController(ISender sender) : ControllerBase
         return Ok(book);
     }
 
+    [Authorize]
     [HttpPost("")]
     public async Task<IActionResult> CreateBook(CreateBookCommand cmd, CancellationToken ct)
     {
